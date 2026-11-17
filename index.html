@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2a2a2a">
+<title>Kassa opmaak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dark:#2a2a2a; --acc:#d17c4e; --acc-d:#a85c32; --acc-l:#f5e6dc; --beige:#faf4ee;
+    --ink:#2a2a2a; --muted:#7a726b; --line:#e8dfd7; --bg:#f5f1ed; --card:#fff;
+    --red:#c8432f; --amber:#b86e1d;
+    --r:14px; --safe-b:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{font-family:Poppins,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.4;
+    padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) calc(96px + var(--safe-b)) env(safe-area-inset-left,0)}
+  .wrap{max-width:560px;margin:0 auto;padding:0 14px}
+  header.top{background:var(--dark);color:#fff;padding:20px 0 26px;margin-bottom:-12px}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-weight:600}
+  header.top .hdr{display:flex;align-items:center;gap:14px}
+  header.top .logo svg{width:50px;height:auto;display:block}
+  header.top .note{font-size:12.5px;opacity:.75;margin-top:12px}
+  header.top h1{margin:2px 0 0;font-size:24px;font-weight:700;letter-spacing:-.01em}
+    .card{background:var(--card);border-radius:var(--r);padding:16px;margin:12px 0;box-shadow:0 1px 2px rgba(20,30,40,.05),0 0 0 1px rgba(20,30,40,.04)}
+  .card h2{font-size:15px;margin:0 0 12px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .card h2 .num{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--acc);color:#fff;font-weight:600;font-size:12px;margin-right:8px;flex:none}
+  .card h2 .ttl{display:flex;align-items:center}
+  .pill{font-size:13px;font-weight:600;background:var(--acc-l);color:var(--acc-d);padding:4px 10px;border-radius:999px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .field{margin-bottom:14px}
+  .field:last-child{margin-bottom:0}
+  label.lbl{display:block;font-size:12.5px;font-weight:500;color:var(--muted);margin-bottom:5px}
+  label.lbl .req{color:var(--red)}
+  input[type=text],input[type=date],textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none}
+  input[type=date]{min-height:46px}
+  textarea{min-height:76px;resize:vertical}
+  input:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(209,124,78,.18)}
+  .field.invalid input,.field.invalid textarea,.field.invalid .chips,.field.invalid .sigpad{border-color:var(--red)!important}
+  .err{display:none;color:var(--red);font-size:12px;margin-top:5px}
+  .field.invalid .err{display:block}
+
+  .chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;border:1.5px solid transparent;border-radius:12px}
+  .chips input{position:absolute;opacity:0;pointer-events:none}
+  .chips label{display:flex;align-items:center;justify-content:center;text-align:center;min-height:46px;padding:8px;border:1.5px solid var(--line);border-radius:10px;font-weight:500;font-size:14px;cursor:pointer;user-select:none;transition:all .15s}
+  .chips input:checked+label{background:var(--dark);border-color:var(--dark);color:#fff;box-shadow:inset 0 -3px 0 var(--acc)}
+  .chips input:focus-visible+label{box-shadow:0 0 0 3px rgba(209,124,78,.35)}
+
+  .grp{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 4px;display:flex;justify-content:space-between}
+  .grp:first-of-type{margin-top:0}
+  .grp span:last-child{font-variant-numeric:tabular-nums;letter-spacing:0;text-transform:none;font-weight:500}
+  .crow{display:grid;grid-template-columns:62px 1fr 92px;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+  .crow:last-child{border-bottom:0}
+  .crow .den{font-weight:600;font-variant-numeric:tabular-nums}
+  .crow .tot{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+  .crow.has .tot{color:var(--ink);font-weight:600}
+  .crow.has .den{color:var(--acc-d)}
+  .step{display:flex;align-items:center;justify-content:center;gap:6px}
+  .step button{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:20px;line-height:1;color:var(--ink);display:grid;place-items:center;cursor:pointer;flex:none;font-family:inherit}
+  .step button:active{background:var(--beige);border-color:var(--acc)}
+  .step input{width:58px!important;text-align:center;padding:8px 4px!important;font-variant-numeric:tabular-nums}
+
+  .totals{margin-top:10px;background:var(--beige);border-radius:10px;padding:10px 12px}
+  .totals div{display:flex;justify-content:space-between;font-size:14px;padding:2px 0;font-variant-numeric:tabular-nums}
+  .totals div.big{font-weight:700;font-size:16px;border-top:1px solid var(--acc-l);margin-top:4px;padding-top:7px}
+
+  .money{position:relative}
+  .money::before{content:"€";position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+  .money input{padding-left:28px;text-align:right;font-variant-numeric:tabular-nums}
+  .drow{display:grid;grid-template-columns:1fr 150px;align-items:center;gap:8px;margin-bottom:8px}
+  .drow .nm{font-weight:500}
+  .drow .nm small{color:var(--muted);font-weight:400}
+  .iconbtn{width:38px;height:38px;border-radius:10px;border:0;background:transparent;color:var(--muted);display:grid;place-items:center;cursor:pointer}
+  .iconbtn:active{background:var(--bg)}
+  .iconbtn svg{width:18px;height:18px}
+  .addbtn{display:flex;align-items:center;gap:6px;border:1.5px dashed #dfb79f;background:transparent;color:var(--acc-d);font:inherit;font-weight:600;font-size:14px;padding:10px 12px;border-radius:10px;width:100%;justify-content:center;cursor:pointer}
+  .addbtn:active{background:var(--beige)}
+
+  .sub{border:1px solid var(--acc-l);border-radius:12px;padding:12px;margin-bottom:12px}
+  .sub h3{margin:0 0 10px;font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+  .sub h3 .tag{font-size:12px;font-weight:500;color:var(--muted)}
+  .mitem{border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--beige)}
+  .mitem .mg2{display:grid;gap:8px}
+  .mitem textarea{min-height:56px}
+  .addrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .addrow .addbtn{padding:12px 8px}
+  #afwSum{margin-top:14px}
+  .mitem .mh{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);font-weight:600;margin:-4px -4px 6px 0}
+  .mitem .mg{display:grid;grid-template-columns:1fr 120px;gap:8px}
+  .empty{font-size:13px;color:var(--muted);text-align:center;padding:4px 0 10px}
+  table.sum{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+  table.sum th{font-size:11.5px;font-weight:600;color:var(--muted);text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+  table.sum td{padding:7px 4px;border-bottom:1px solid var(--line)}
+  table.sum .r{text-align:right}
+  table.sum .c{text-align:center}
+  table.sum tfoot td{font-weight:700;border-bottom:0}
+
+  .sigpad{position:relative;border:1.5px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+  .sigpad canvas{display:block;width:100%;height:190px;touch-action:none;cursor:crosshair}
+  .sigpad .hint{position:absolute;left:0;right:0;bottom:34px;text-align:center;color:#c9bdb2;font-size:13px;pointer-events:none}
+  .sigpad .baseline{position:absolute;left:18px;right:18px;bottom:52px;border-bottom:1px dashed #e3d6ca;pointer-events:none}
+  .sigpad.signed .hint{display:none}
+  .sigmeta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12.5px;color:var(--muted);gap:8px}
+  .sigmeta .stamp{font-variant-numeric:tabular-nums}
+  .sigmeta .stamp b{color:var(--ink);font-weight:600}
+  .linkbtn{border:0;background:transparent;color:var(--acc-d);font:inherit;font-weight:600;font-size:13px;padding:6px 4px;cursor:pointer}
+
+  .ghost{display:block;width:100%;margin:6px 0 18px;padding:13px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font:inherit;font-weight:600;color:var(--muted);cursor:pointer}
+
+  .bar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 0 calc(10px + var(--safe-b));z-index:20}
+  .bar .wrap{display:flex;align-items:center;gap:12px}
+  .bar .lbl2{font-size:11.5px;color:var(--muted);font-weight:500}
+  .bar .val{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.15}
+  .bar .val small{display:block;font-size:11.5px;font-weight:500;color:var(--muted)}
+  .primary{margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--dark);color:#fff;border:0;border-radius:12px;padding:13px 18px;font:inherit;font-weight:600;font-size:15px;cursor:pointer;box-shadow:0 4px 12px rgba(42,42,42,.25);white-space:nowrap}
+  .primary:active{background:#000}
+  .primary svg{color:var(--acc)}
+  .primary[disabled]{opacity:.6}
+  .primary svg{width:18px;height:18px}
+
+  .toast{position:fixed;left:50%;bottom:calc(84px + var(--safe-b));transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:40;max-width:calc(100% - 28px);text-align:center}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast.bad{background:var(--red)}
+
+  .modal{position:fixed;inset:0;background:rgba(20,26,32,.45);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:14px}
+  .modal.show{display:flex}
+  .modal .box{background:#fff;border-radius:18px;padding:20px;max-width:420px;width:100%;margin-bottom:var(--safe-b)}
+  .modal h4{margin:0 0 6px;font-size:17px}
+  .modal p{margin:0 0 16px;color:var(--muted);font-size:14px}
+  .modal .btns{display:flex;gap:10px}
+  .modal .btns button{flex:1;padding:13px;border-radius:12px;font:inherit;font-weight:600;border:1.5px solid var(--line);background:#fff;cursor:pointer}
+  .modal .btns .danger{background:var(--red);border-color:var(--red);color:#fff}
+  .modal .stack{display:grid;gap:10px}
+  .modal .stack button{width:100%;padding:14px;border-radius:12px;font:inherit;font-weight:600;font-size:15px;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--ink)}
+  .modal .stack .btn-dark{background:var(--dark);border-color:var(--dark);color:#fff}
+  .modal .stack .btn-close{border:0;background:transparent;color:var(--muted);padding:8px}
+  .modal .fname{font-size:13px;color:var(--ink);background:var(--beige);border:1px solid var(--acc-l);border-radius:10px;padding:9px 11px;margin:0 0 12px;word-break:break-all}
+  .modal .done-ic{width:44px;height:44px;border-radius:50%;background:var(--acc-l);display:grid;place-items:center;margin-bottom:10px}
+  .modal .done-ic svg{width:22px;height:22px;color:var(--acc-d)}
+  @media (min-width:600px){ .modal{align-items:center} }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="hdr">
+      <div class="logo" id="logo"></div>
+      <div>
+        <div class="eyebrow">03 · Kassa opmaak</div>
+        <h1>Kassa opmaak</h1>
+      </div>
+    </div>
+    <div class="note" id="draftNote">Je invoer wordt automatisch bewaard op dit toestel.</div>
+  </div>
+</header>
+
+<main class="wrap" id="form">
+
+  <!-- 1. Algemeen -->
+  <section class="card">
+    <h2><span class="ttl"><span class="num">1</span>Algemeen</span></h2>
+    <div class="field" data-f="datum">
+      <label class="lbl" for="datum">Datum <span class="req">*</span></label>
+      <input type="date" id="datum">
+      <div class="err">Kies een datum.</div>
+    </div>
+    <div class="field" data-f="naam">
+      <label class="lbl" for="naam">Naam medewerker <span class="req">*</span></label>
+      <input type="text" id="naam" autocomplete="name" placeholder="Voor- en achternaam">
+      <div class="err">Vul je naam in.</div>
+    </div>
+    <div class="field" data-f="locatie">
+      <label class="lbl">Locatie <span class="req">*</span></label>
+      <div class="chips" id="locaties" role="radiogroup"></div>
+      <div class="err">Kies een locatie.</div>
+    </div>
+  </section>
+
+  <!-- 2. Contant geld -->
+  <section class="card">
+    <h2><span class="ttl"><span class="num">2</span>Contant geld</span><span class="pill" id="cashPill">€ 0,00</span></h2>
+    <div class="grp"><span>Briefjes</span><span id="subBrief">€ 0,00</span></div>
+    <div id="rowsBrief"></div>
+    <div class="grp"><span>Muntjes</span><span id="subMunt">€ 0,00</span></div>
+    <div id="rowsMunt"></div>
+    <div class="totals">
+      <div><span>Briefjes</span><span id="tBrief">€ 0,00</span></div>
+      <div><span>Muntjes</span><span id="tMunt">€ 0,00</span></div>
+      <div class="big"><span>Totaal contant</span><span id="tCash">€ 0,00</span></div>
+    </div>
+  </section>
+
+  <!-- 3. Digitale betalingen -->
+  <section class="card">
+    <h2><span class="ttl"><span class="num">3</span>Digitale betalingen</span><span class="pill" id="digPill">€ 0,00</span></h2>
+    <div class="drow">
+      <div class="nm">Ayden</div>
+      <div class="money"><input type="text" inputmode="decimal" id="ayden" placeholder="0,00"></div>
+    </div>
+    <div class="drow">
+      <div class="nm">BCC</div>
+      <div class="money"><input type="text" inputmode="decimal" id="bcc" placeholder="0,00"></div>
+    </div>
+    <div class="totals"><div class="big" style="border:0;margin:0;padding:0"><span>Totaal digitaal</span><span id="tDig">€ 0,00</span></div></div>
+  </section>
+
+  <!-- 4. Kassa afwijkingen -->
+  <section class="card">
+    <h2><span class="ttl"><span class="num">4</span>Kassa afwijkingen</span><span class="pill" id="afwPill">€ 0,00</span></h2>
+
+    <div id="afwList"></div>
+    <div class="addrow">
+      <button class="addbtn" type="button" id="addTekort">＋ Tekort toevoegen</button>
+      <button class="addbtn" type="button" id="addMist">＋ Mistikking toevoegen</button>
+    </div>
+
+    <table class="sum" id="afwSum" hidden>
+      <thead><tr><th>Type</th><th class="c">Incidenten</th><th class="r">Totaal</th></tr></thead>
+      <tbody>
+        <tr><td>Tekorten</td><td class="c" id="sTekN">0</td><td class="r" id="sTekT">€ 0,00</td></tr>
+        <tr><td>Mistikkingen</td><td class="c" id="sMisN">0</td><td class="r" id="sMisT">€ 0,00</td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="2">Totaal afwijkingen</td><td class="r" id="sAfwT">€ 0,00</td></tr></tfoot>
+    </table>
+  </section>
+
+  <!-- 5. Controle -->
+  <section class="card">
+    <h2><span class="ttl"><span class="num">5</span>Controle</span></h2>
+    <div class="field">
+      <label class="lbl" for="gecontroleerd">Kassa opmaak gecontroleerd door</label>
+      <input type="text" id="gecontroleerd" placeholder="Naam">
+    </div>
+    <div class="field">
+      <label class="lbl" for="geldLocatie">Locatie waar het geld ligt</label>
+      <input type="text" id="geldLocatie" placeholder="Bv. brievenbus, kluis">
+    </div>
+    <div class="field">
+      <label class="lbl" for="opmerkingen">Opmerkingen over de kassa</label>
+      <textarea id="opmerkingen" placeholder="Vrije opmerkingen"></textarea>
+    </div>
+  </section>
+
+  <!-- 6. Handtekening -->
+  <section class="card">
+    <h2><span class="ttl"><span class="num">6</span>Naam + handtekening</span></h2>
+    <div class="field" data-f="signNaam">
+      <label class="lbl" for="signNaam">Naam <span class="req">*</span></label>
+      <input type="text" id="signNaam" autocomplete="name" placeholder="Naam van de medewerker">
+      <div class="err">Vul de naam in bij de handtekening.</div>
+    </div>
+    <div class="field" data-f="signature">
+      <label class="lbl">Handtekening <span class="req">*</span></label>
+      <div class="sigpad" id="sigpad">
+        <canvas id="sig"></canvas>
+        <div class="baseline"></div>
+        <div class="hint">Teken hier met je vinger</div>
+      </div>
+      <div class="sigmeta">
+        <span class="stamp" id="sigStamp">Datum en tijd worden automatisch toegevoegd</span>
+        <button class="linkbtn" type="button" id="sigClear">Wissen</button>
+      </div>
+      <div class="err">Zet je handtekening.</div>
+    </div>
+  </section>
+
+  <!-- Samenvatting -->
+  <section class="card">
+    <h2><span class="ttl">Samenvatting</span></h2>
+    <table class="sum">
+      <tbody>
+        <tr><td>Totaal contant geld</td><td class="r" id="zCash">€ 0,00</td></tr>
+        <tr><td>Totaal digitale betalingen</td><td class="r" id="zDig">€ 0,00</td></tr>
+        <tr><td><b>Totaal kassa</b></td><td class="r"><b id="zKassa">€ 0,00</b></td></tr>
+        <tr><td>Totaal kassa afwijkingen</td><td class="r" id="zAfw">€ 0,00</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <button class="ghost" type="button" id="resetBtn">Nieuw formulier starten</button>
+</main>
+
+<div class="bar">
+  <div class="wrap">
+    <div>
+      <div class="lbl2">Totaal kassa</div>
+      <div class="val" id="barTotal">€ 0,00</div>
+    </div>
+    <button class="primary" type="button" id="exportBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 12v6"/><path d="m9 15 3 3 3-3"/></svg>
+      <span>PDF exporteren</span>
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="box">
+    <h4>Nieuw formulier starten?</h4>
+    <p>Alle ingevulde gegevens en de handtekening worden gewist. Exporteer eerst de PDF als je die nog nodig hebt.</p>
+    <div class="btns">
+      <button type="button" id="mCancel">Annuleren</button>
+      <button type="button" class="danger" id="mOk">Wissen</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="doneModal" role="dialog" aria-modal="true">
+  <div class="box">
+    <div class="done-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+    <h4>PDF is klaar</h4>
+    <div class="fname" id="doneName"></div>
+    <p>Bewaar de PDF op je toestel en upload hem daarna in het OneTeam-formulier.</p>
+    <div class="stack">
+      <button type="button" class="btn-dark" id="dShare" hidden>Bewaren of delen</button>
+      <button type="button" id="dDownload">Downloaden</button>
+      <button type="button" class="btn-close" id="dClose">Sluiten</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Kassa opmaak: rekenlogica + PDF ---------- */
+var LOCATIES = ['Oud Gemeentehuis', 'Skaldu', 'Stella Nova', 'Puurs Lof'];
+
+/* Logo (HT) — rechthoeken in eigen coördinaten (1106 x 1164) met kleurverloop */
+var LOGO_W = 1106, LOGO_H = 1164;
+var LOGO_RECTS = [
+  [0, 0, 1106, 18], [0, 1146, 1106, 18], [0, 0, 18, 1164], [1088, 0, 18, 1164],
+  [163, 280, 74, 392], [163, 737, 74, 64], [237, 498, 263, 65], [500, 280, 74, 521],
+  [574, 280, 407, 64], [740, 344, 74, 328], [740, 737, 74, 64]
+];
+var LOGO_C0 = [245, 153, 107], LOGO_C1 = [176, 101, 56];
+
+function logoSVG(cls) {
+  var r = LOGO_RECTS.map(function (q) {
+    return '<rect x="' + q[0] + '" y="' + q[1] + '" width="' + q[2] + '" height="' + q[3] + '"/>';
+  }).join('');
+  return '<svg class="' + (cls || '') + '" viewBox="0 0 ' + LOGO_W + ' ' + LOGO_H + '" role="img" aria-label="Logo">' +
+    '<defs><linearGradient id="htg" x1="0" x2="1" y1="0" y2="0">' +
+    '<stop offset="0" stop-color="rgb(' + LOGO_C0.join(',') + ')"/><stop offset="1" stop-color="rgb(' + LOGO_C1.join(',') + ')"/>' +
+    '</linearGradient></defs><g fill="url(#htg)">' + r + '</g></svg>';
+}
+
+function drawLogoPdf(doc, x, y, w) {
+  var k = w / LOGO_W, STEP = 24;
+  LOGO_RECTS.forEach(function (q) {
+    for (var sx = q[0]; sx < q[0] + q[2]; sx += STEP) {
+      var sw = Math.min(STEP, q[0] + q[2] - sx), cx = (sx + sw / 2) / LOGO_W;
+      doc.setFillColor(
+        Math.round(LOGO_C0[0] + (LOGO_C1[0] - LOGO_C0[0]) * cx),
+        Math.round(LOGO_C0[1] + (LOGO_C1[1] - LOGO_C0[1]) * cx),
+        Math.round(LOGO_C0[2] + (LOGO_C1[2] - LOGO_C0[2]) * cx));
+      var ov = sx + sw < q[0] + q[2] ? 0.15 : 0;
+      doc.rect(x + sx * k, y + q[1] * k, sw * k + ov, q[3] * k, 'F');
+    }
+  });
+  return w * LOGO_H / LOGO_W;
+}
+
+var DENOMS = [
+  { cents: 50000, type: 'Briefjes' }, { cents: 20000, type: 'Briefjes' },
+  { cents: 10000, type: 'Briefjes' }, { cents: 5000, type: 'Briefjes' },
+  { cents: 2000, type: 'Briefjes' },  { cents: 1000, type: 'Briefjes' },
+  { cents: 500, type: 'Briefjes' },
+  { cents: 200, type: 'Muntjes' }, { cents: 100, type: 'Muntjes' },
+  { cents: 50, type: 'Muntjes' },  { cents: 20, type: 'Muntjes' },
+  { cents: 10, type: 'Muntjes' },  { cents: 5, type: 'Muntjes' },
+  { cents: 2, type: 'Muntjes' },   { cents: 1, type: 'Muntjes' }
+];
+
+function emptyState() {
+  var cash = {};
+  DENOMS.forEach(function (d) { cash[d.cents] = 0; });
+  return {
+    datum: todayISO(), naam: '', locatie: '',
+    cash: cash,
+    ayden: '', bcc: '',
+    afw: [],
+    gecontroleerd: '', geldLocatie: '', opmerkingen: '',
+    signNaam: '', signature: null, sigW: 0, sigH: 0, signedAt: null
+  };
+}
+
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+function todayISO() {
+  var d = new Date();
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+}
+
+/* "1.234,50" / "12,5" / "12.50" -> cents (int) */
+function parseCents(str) {
+  if (str === null || str === undefined) return 0;
+  var s = String(str).replace(/[€\s  ]/g, '');
+  if (!s) return 0;
+  if (s.indexOf(',') > -1 && s.indexOf('.') > -1) s = s.replace(/\./g, '').replace(',', '.');
+  else s = s.replace(',', '.');
+  var v = parseFloat(s);
+  if (!isFinite(v) || v < 0) return 0;
+  return Math.round(v * 100);
+}
+
+function fmtEUR(cents) {
+  var neg = cents < 0, c = Math.abs(cents);
+  var euros = Math.floor(c / 100), rest = c % 100;
+  var s = String(euros).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return (neg ? '- ' : '') + '€ ' + s + ',' + pad2(rest);
+}
+
+function fmtDenom(cents) {
+  if (cents >= 100) return '€ ' + (cents / 100);
+  return '€ 0,' + pad2(cents);
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  var p = iso.split('-');
+  return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : iso;
+}
+
+function fmtDateTime(isoTs) {
+  if (!isoTs) return '';
+  var d = new Date(isoTs);
+  return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear() +
+    ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+
+function computeTotals(s) {
+  var cashLines = DENOMS.map(function (d, i) {
+    var count = parseInt(s.cash[d.cents], 10) || 0;
+    return { n: i + 1, type: d.type, cents: d.cents, count: count, total: count * d.cents };
+  });
+  var briefjes = 0, muntjes = 0;
+  cashLines.forEach(function (l) { if (l.type === 'Briefjes') briefjes += l.total; else muntjes += l.total; });
+  var cashTotal = briefjes + muntjes;
+
+  var digital = [{ naam: 'Ayden', cents: parseCents(s.ayden) }, { naam: 'BCC', cents: parseCents(s.bcc) }];
+  var digitalTotal = digital.reduce(function (a, d) { return a + d.cents; }, 0);
+
+  var afwItems = (s.afw || [])
+    .map(function (it) { return { type: it.type, opm: (it.opm || '').trim(), cents: parseCents(it.bedrag) }; })
+    .filter(function (it) { return it.cents > 0 || it.opm; });
+  function sum(list) { return list.reduce(function (a, it) { return a + it.cents; }, 0); }
+  var tekortItems = afwItems.filter(function (it) { return it.type === 'tekort'; });
+  var mistItems = afwItems.filter(function (it) { return it.type === 'mistikking'; });
+  var tekortCents = sum(tekortItems), mistTotal = sum(mistItems);
+
+  return {
+    cashLines: cashLines, briefjes: briefjes, muntjes: muntjes, cashTotal: cashTotal,
+    digital: digital, digitalTotal: digitalTotal,
+    kassaTotal: cashTotal + digitalTotal,
+    afwItems: afwItems, tekortItems: tekortItems,
+    tekortCents: tekortCents, tekortCount: tekortItems.length,
+    mistItems: mistItems, mistTotal: mistTotal, mistCount: mistItems.length,
+    afwijkingTotal: tekortCents + mistTotal
+  };
+}
+
+function makeRef(date) {
+  var d = date || new Date();
+  return 'KO-' + d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + '-' +
+    pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(d.getSeconds());
+}
+
+/* ---------- PDF ---------- */
+function pdfSafe(t) { return String(t == null ? '' : t).replace(/[  ]/g, ' '); }
+
+function buildKassaPdf(jsPDF, s, meta) {
+  var t = computeTotals(s);
+  var doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  var W = 210, H = 297, M = 16;
+  var DARK = [42, 42, 42], ACC = [209, 124, 78], ACC_D = [168, 92, 50], BEIGE = [246, 236, 227], BEIGE_XL = [251, 247, 243], INK = [42, 42, 42], MUTED = [118, 112, 106], LINE = [226, 216, 207];
+  var created = meta.createdAt || new Date();
+
+  var base = {
+    theme: 'grid',
+    margin: { left: M, right: M, bottom: 18 },
+    styles: { font: 'helvetica', fontSize: 9, cellPadding: { top: 1.8, bottom: 1.8, left: 2.4, right: 2.4 }, textColor: INK, lineColor: LINE, lineWidth: 0.2, valign: 'middle' },
+    headStyles: { fillColor: BEIGE, textColor: INK, fontStyle: 'bold' },
+    footStyles: { fillColor: BEIGE_XL, textColor: INK, fontStyle: 'bold' }
+  };
+  function table(opts) {
+    var o = {};
+    for (var k in base) o[k] = base[k];
+    for (var j in opts) o[j] = opts[j];
+    doc.autoTable(o);
+    return doc.lastAutoTable.finalY;
+  }
+  function heading(txt, y, need) {
+    if (y + (need || 22) > H - 20) { doc.addPage(); y = 18; }
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor.apply(doc, ACC_D);
+    doc.text(txt, M, y);
+    return y + 3;
+  }
+
+  // Header
+  doc.setFillColor.apply(doc, DARK); doc.rect(0, 0, W, 3.5, 'F');
+  doc.setFillColor.apply(doc, ACC); doc.rect(0, 3.5, W, 0.8, 'F');
+  drawLogoPdf(doc, M, 10, 17);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(18); doc.setTextColor.apply(doc, INK);
+  doc.text('Kassa opmaak', M + 22, 19);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor.apply(doc, MUTED);
+  doc.text('03. KASSA OPMAAK  ·  ' + meta.ref, M + 22, 25);
+
+  // Totaal-blok rechts
+  doc.setFillColor.apply(doc, DARK); doc.roundedRect(W - M - 58, 10, 58, 18, 2, 2, 'F');
+  doc.setFillColor.apply(doc, ACC); doc.rect(W - M - 58, 12.5, 1.2, 13, 'F');
+  doc.setFontSize(8); doc.setTextColor(214, 205, 196);
+  doc.text('Totaal kassa', W - M - 53, 16);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(14); doc.setTextColor(255, 255, 255);
+  doc.text(pdfSafe(fmtEUR(t.kassaTotal)), W - M - 53, 24);
+
+  var y = 32;
+  y = table({
+    startY: y, theme: 'plain',
+    styles: { font: 'helvetica', fontSize: 10, cellPadding: { top: 1.6, bottom: 1.6, left: 0, right: 2 }, textColor: INK },
+    columnStyles: { 0: { cellWidth: 48, textColor: ACC_D, fontStyle: 'bold', fontSize: 9 } },
+    body: [
+      ['Datum', fmtDate(s.datum)],
+      ['Naam medewerker', pdfSafe(s.naam)],
+      ['Locatie', pdfSafe(s.locatie)]
+    ]
+  });
+
+  // Contant geld
+  y = heading('Contant geld', y + 8, 60);
+  y = table({
+    startY: y,
+    head: [['N°', 'Type', 'Hoeveelheid €', 'Aantal', 'Totaal']],
+    body: t.cashLines.map(function (l) {
+      return [l.n, l.type, pdfSafe(fmtDenom(l.cents)), l.count ? String(l.count) : '', l.count ? pdfSafe(fmtEUR(l.total)) : ''];
+    }),
+    foot: [
+      [{ content: 'Subtotaal briefjes', colSpan: 4, styles: { halign: 'right', fontStyle: 'normal' } }, pdfSafe(fmtEUR(t.briefjes))],
+      [{ content: 'Subtotaal muntjes', colSpan: 4, styles: { halign: 'right', fontStyle: 'normal' } }, pdfSafe(fmtEUR(t.muntjes))],
+      [{ content: 'Totaal contant geld', colSpan: 4, styles: { halign: 'right' } }, pdfSafe(fmtEUR(t.cashTotal))]
+    ],
+    showFoot: 'lastPage',
+    columnStyles: { 0: { halign: 'center', cellWidth: 12 }, 2: { halign: 'right' }, 3: { halign: 'center' }, 4: { halign: 'right', cellWidth: 36 } },
+    didParseCell: function (d) {
+      if (d.section === 'head' && d.column.index === 0) d.cell.styles.halign = 'center';
+      if (d.section === 'head' && (d.column.index === 2 || d.column.index === 4)) d.cell.styles.halign = 'right';
+      if (d.section === 'head' && d.column.index === 3) d.cell.styles.halign = 'center';
+      if (d.section === 'foot') d.cell.styles.halign = 'right';
+    }
+  });
+
+  // Digitale betalingen
+  y = heading('Digitale betalingen', y + 9, 40);
+  y = table({
+    startY: y,
+    head: [['N°', 'Ticket naam', 'Bedrag']],
+    body: t.digital.map(function (d, i) { return [i + 1, d.naam, d.cents ? pdfSafe(fmtEUR(d.cents)) : '']; }),
+    foot: [[{ content: 'Totaal digitale betalingen', colSpan: 2, styles: { halign: 'right' } }, pdfSafe(fmtEUR(t.digitalTotal))]],
+    columnStyles: { 0: { halign: 'center', cellWidth: 12 }, 2: { halign: 'right', cellWidth: 36 } },
+    didParseCell: function (d) {
+      if (d.section === 'head' && d.column.index === 0) d.cell.styles.halign = 'center';
+      if (d.column.index === 2 && d.section !== 'body') d.cell.styles.halign = 'right';
+    }
+  });
+
+  // Kassa afwijkingen
+  y = heading('Kassa afwijkingen', y + 9, 40);
+  y = table({
+    startY: y,
+    head: [['N°', 'Type', 'Aantal incidenten', 'Totaalbedrag']],
+    body: [
+      [1, 'Tekorten', String(t.tekortCount), t.tekortCents ? pdfSafe(fmtEUR(t.tekortCents)) : ''],
+      [2, 'Mistikkingen', String(t.mistCount), t.mistTotal ? pdfSafe(fmtEUR(t.mistTotal)) : '']
+    ],
+    foot: [[{ content: 'Totaal afwijkingen', colSpan: 3, styles: { halign: 'right' } }, pdfSafe(fmtEUR(t.afwijkingTotal))]],
+    columnStyles: { 0: { halign: 'center', cellWidth: 12 }, 2: { halign: 'center' }, 3: { halign: 'right', cellWidth: 36 } },
+    didParseCell: function (d) {
+      if (d.section === 'head' && (d.column.index === 0 || d.column.index === 2)) d.cell.styles.halign = 'center';
+      if (d.section !== 'body' && d.column.index === 3) d.cell.styles.halign = 'right';
+    }
+  });
+
+  var detail = t.tekortItems.concat(t.mistItems);
+  if (detail.length) {
+    if (y + 20 > H - 20) { doc.addPage(); y = 14; }
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor.apply(doc, INK);
+    doc.text('Detail afwijkingen', M, y + 7);
+    y = table({
+      startY: y + 9,
+      head: [['N°', 'Type', 'Bedrag', 'Opmerkingen']],
+      body: detail.map(function (it, i) {
+        return [i + 1, it.type === 'tekort' ? 'Tekort' : 'Mistikking', it.cents ? pdfSafe(fmtEUR(it.cents)) : '', pdfSafe(it.opm)];
+      }),
+      columnStyles: { 0: { halign: 'center', cellWidth: 12 }, 1: { cellWidth: 30 }, 2: { halign: 'right', cellWidth: 30 } },
+      didParseCell: function (d) {
+        if (d.section === 'head' && d.column.index === 0) d.cell.styles.halign = 'center';
+        if (d.section === 'head' && d.column.index === 2) d.cell.styles.halign = 'right';
+      }
+    });
+  }
+
+  // Samenvatting
+  y = heading('Samenvatting', y + 9, 40);
+  y = table({
+    startY: y,
+    body: [
+      ['Totaal contant geld', pdfSafe(fmtEUR(t.cashTotal))],
+      ['Totaal digitale betalingen', pdfSafe(fmtEUR(t.digitalTotal))],
+      [{ content: 'Totaal kassa', styles: { fontStyle: 'bold' } }, { content: pdfSafe(fmtEUR(t.kassaTotal)), styles: { fontStyle: 'bold' } }],
+      ['Totaal kassa afwijkingen', pdfSafe(fmtEUR(t.afwijkingTotal))]
+    ],
+    columnStyles: { 0: { fillColor: BEIGE_XL }, 1: { halign: 'right', cellWidth: 46 } }
+  });
+
+  // Controle & opmerkingen
+  y = heading('Controle', y + 9, 36);
+  y = table({
+    startY: y,
+    body: [
+      ['Kassa opmaak gecontroleerd door', pdfSafe(s.gecontroleerd)],
+      ['Locatie waar het geld ligt', pdfSafe(s.geldLocatie)],
+      ['Opmerkingen over de kassa', pdfSafe(s.opmerkingen)]
+    ],
+    columnStyles: { 0: { cellWidth: 62, textColor: ACC_D, fontStyle: 'bold', fillColor: BEIGE_XL } }
+  });
+
+  // Handtekening
+  var sigBoxW = 80, sigImgH = 0;
+  if (s.signature && s.sigW && s.sigH) sigImgH = Math.min(40, sigBoxW * s.sigH / s.sigW);
+  y = heading('Naam + handtekening van de medewerker', y + 9, 30 + sigImgH);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor.apply(doc, INK);
+  doc.text(pdfSafe(s.signNaam), M, y + 5);
+  var sy = y + 8;
+  doc.setDrawColor.apply(doc, LINE); doc.setLineWidth(0.2);
+  doc.roundedRect(M, sy, sigBoxW + 6, sigImgH + 6, 1.5, 1.5, 'S');
+  if (s.signature && sigImgH) {
+    var w = sigImgH * s.sigW / s.sigH;
+    doc.addImage(s.signature, 'PNG', M + 3, sy + 3, Math.min(w, sigBoxW), sigImgH);
+  }
+  doc.setFontSize(8.5); doc.setTextColor.apply(doc, MUTED);
+  doc.text(pdfSafe('Ondertekend door ' + (s.signNaam || '–') + ' op ' + (s.signedAt ? fmtDateTime(s.signedAt) : '–')), M, sy + sigImgH + 12);
+
+  // Footer
+  var n = doc.getNumberOfPages();
+  for (var p = 1; p <= n; p++) {
+    doc.setPage(p);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor.apply(doc, MUTED);
+    doc.text(pdfSafe('Kassa opmaak · ' + meta.ref + ' · aangemaakt ' + fmtDateTime(created.toISOString())), M, H - 9);
+    doc.text(p + ' / ' + n, W - M, H - 9, { align: 'right' });
+  }
+  return doc;
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = { logoSVG: logoSVG, DENOMS: DENOMS, LOCATIES: LOCATIES, emptyState: emptyState, parseCents: parseCents, fmtEUR: fmtEUR, computeTotals: computeTotals, buildKassaPdf: buildKassaPdf, makeRef: makeRef };
+}
+
+</script>
+<script>
+(function () {
+  'use strict';
+  var KEY = 'kassa-opmaak-concept-v2';
+  var S = emptyState();
+  var $ = function (id) { return document.getElementById(id); };
+  var TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>';
+
+  /* ---------- opslag (concept op dit toestel) ---------- */
+  var saveTimer = null;
+  function saveDraft() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+    }, 300);
+  }
+  function loadDraft() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return false;
+      var d = JSON.parse(raw), base = emptyState();
+      for (var k in base) if (d[k] !== undefined) base[k] = d[k];
+      S = base;
+      return true;
+    } catch (e) { return false; }
+  }
+
+  /* ---------- helpers ---------- */
+  function cleanMoney(v) { return v.replace(/[^\d.,]/g, ''); }
+  function normMoney(v) { var c = parseCents(v); return c ? fmtEUR(c).replace('€ ', '') : ''; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function bindMoney(input, get, set) {
+    input.value = get() || '';
+    input.addEventListener('input', function () {
+      if (!input.isConnected) return;
+      var v = cleanMoney(input.value);
+      if (v !== input.value) input.value = v;
+      set(v); update();
+    });
+    input.addEventListener('blur', function () {
+      if (!input.isConnected) return;
+      var v = normMoney(input.value); input.value = v; set(v); update();
+    });
+  }
+  var toastT;
+  function toast(msg, bad) {
+    var t = $('toast'); t.textContent = msg; t.className = 'toast show' + (bad ? ' bad' : '');
+    clearTimeout(toastT); toastT = setTimeout(function () { t.className = 'toast' + (bad ? ' bad' : ''); }, 3200);
+  }
+
+  /* ---------- 1. algemeen ---------- */
+  function initAlgemeen() {
+    var box = $('locaties');
+    box.innerHTML = LOCATIES.map(function (l, i) {
+      return '<input type="radio" name="loc" id="loc' + i + '" value="' + esc(l) + '"><label for="loc' + i + '">' + esc(l) + '</label>';
+    }).join('');
+    box.addEventListener('change', function (e) { S.locatie = e.target.value; clearErr('locatie'); update(); });
+    ['datum', 'naam', 'gecontroleerd', 'geldLocatie', 'opmerkingen', 'signNaam'].forEach(function (id) {
+      $(id).addEventListener('input', function () { S[id] = $(id).value; clearErr(id); update(); });
+    });
+    bindMoney($('ayden'), function () { return S.ayden; }, function (v) { S.ayden = v; });
+    bindMoney($('bcc'), function () { return S.bcc; }, function (v) { S.bcc = v; });
+  }
+  function fillStatic() {
+    ['datum', 'naam', 'gecontroleerd', 'geldLocatie', 'opmerkingen', 'signNaam'].forEach(function (id) { $(id).value = S[id] || ''; });
+    $('ayden').value = S.ayden || '';
+    $('bcc').value = S.bcc || '';
+    Array.prototype.forEach.call(document.querySelectorAll('#locaties input'), function (r) { r.checked = r.value === S.locatie; });
+    Object.keys(cashInputs).forEach(function (c) { cashInputs[c].value = S.cash[c] ? S.cash[c] : ''; });
+  }
+
+  /* ---------- 2. contant ---------- */
+  var cashInputs = {}, cashRows = {}, cashTots = {};
+  function initCash() {
+    DENOMS.forEach(function (d) {
+      var row = document.createElement('div');
+      row.className = 'crow';
+      row.innerHTML = '<div class="den">' + fmtDenom(d.cents) + '</div>' +
+        '<div class="step"><button type="button" aria-label="Min">−</button>' +
+        '<input type="text" inputmode="numeric" pattern="[0-9]*" placeholder="0" aria-label="Aantal ' + fmtDenom(d.cents) + '">' +
+        '<button type="button" aria-label="Plus">+</button></div>' +
+        '<div class="tot">€ 0,00</div>';
+      var btns = row.querySelectorAll('button'), inp = row.querySelector('input');
+      function setCount(n) {
+        n = Math.max(0, Math.min(99999, n | 0));
+        S.cash[d.cents] = n; inp.value = n ? n : ''; update();
+      }
+      btns[0].addEventListener('click', function () { setCount((S.cash[d.cents] || 0) - 1); });
+      btns[1].addEventListener('click', function () { setCount((S.cash[d.cents] || 0) + 1); });
+      inp.addEventListener('input', function () {
+        var v = inp.value.replace(/\D/g, '').slice(0, 5);
+        if (v !== inp.value) inp.value = v;
+        S.cash[d.cents] = parseInt(v, 10) || 0; update();
+      });
+      inp.addEventListener('focus', function () { setTimeout(function () { inp.select(); }, 0); });
+      cashInputs[d.cents] = inp; cashRows[d.cents] = row; cashTots[d.cents] = row.querySelector('.tot');
+      $(d.type === 'Briefjes' ? 'rowsBrief' : 'rowsMunt').appendChild(row);
+    });
+  }
+
+  /* ---------- 4. kassa afwijkingen ---------- */
+  var AFW = { tekort: { one: 'Tekort', many: 'Tekorten' }, mistikking: { one: 'Mistikking', many: 'Mistikkingen' } };
+  function renderAfw(focusItem) {
+    var box = $('afwList'); box.innerHTML = '';
+    if (!S.afw.length) {
+      box.innerHTML = '<div class="empty">Geen afwijkingen. Voeg een tekort of mistikking toe indien nodig.</div>';
+      return;
+    }
+    ['tekort', 'mistikking'].forEach(function (type) {
+      var items = S.afw.filter(function (it) { return it.type === type; });
+      if (!items.length) return;
+      var g = document.createElement('div');
+      g.className = 'grp'; g.innerHTML = '<span>' + AFW[type].many + '</span><span></span>';
+      box.appendChild(g);
+      items.forEach(function (it, i) {
+        var el = document.createElement('div');
+        el.className = 'mitem';
+        el.innerHTML = '<div class="mh"><span>' + AFW[type].one + ' ' + (i + 1) + '</span>' +
+          '<button type="button" class="iconbtn" aria-label="Verwijder ' + AFW[type].one.toLowerCase() + '">' + TRASH + '</button></div>' +
+          '<div class="mg2"><div class="money"><input type="text" inputmode="decimal" placeholder="0,00" aria-label="Bedrag"></div>' +
+          '<textarea placeholder="' + (type === 'tekort' ? 'Opmerking (bv. oorzaak, wie is op de hoogte)' : 'Opmerking (bv. 2x cola i.p.v. 1)') + '" aria-label="Opmerkingen"></textarea></div>';
+        var inp = el.querySelector('input'), ta = el.querySelector('textarea');
+        bindMoney(inp, function () { return it.bedrag; }, function (v) { it.bedrag = v; });
+        ta.value = it.opm || '';
+        ta.addEventListener('input', function () { it.opm = ta.value; update(); });
+        el.querySelector('.iconbtn').addEventListener('click', function () {
+          S.afw.splice(S.afw.indexOf(it), 1); renderAfw(); update();
+        });
+        box.appendChild(el);
+        if (focusItem === it) setTimeout(function () { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); inp.focus(); }, 30);
+      });
+    });
+  }
+  function addAfw(type) {
+    var it = { type: type, bedrag: '', opm: '' };
+    S.afw.push(it); renderAfw(it); update();
+  }
+
+  /* ---------- 6. handtekening ---------- */
+  var cv, ctx, drawing = false, last = null, mid = null, cssW = 0, cssH = 0;
+  function sizeCanvas() {
+    var r = cv.getBoundingClientRect();
+    if (!r.width) return;
+    var dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+    if (Math.round(r.width) === cssW && cssH) return;
+    cssW = Math.round(r.width); cssH = Math.round(r.height);
+    cv.width = cssW * dpr; cv.height = cssH * dpr;
+    ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#2a2a2a'; ctx.lineWidth = 2.4;
+    if (S.signature) {
+      var img = new Image();
+      img.onload = function () {
+        var sc = Math.min(cssW / (S.sigW || cssW), cssH / (S.sigH || cssH));
+        ctx.drawImage(img, 0, 0, (S.sigW || cssW) * sc, (S.sigH || cssH) * sc);
+      };
+      img.src = S.signature;
+    }
+  }
+  function pos(e) { var r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+  function initSig() {
+    cv = $('sig');
+    cv.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      try { cv.setPointerCapture(e.pointerId); } catch (x) {}
+      drawing = true; last = pos(e); mid = last;
+      ctx.beginPath(); ctx.arc(last.x, last.y, 1.2, 0, Math.PI * 2); ctx.fillStyle = '#2a2a2a'; ctx.fill();
+      $('sigpad').classList.add('signed');
+    });
+    cv.addEventListener('pointermove', function (e) {
+      if (!drawing) return;
+      e.preventDefault();
+      var evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+      if (!evs.length) evs = [e];
+      evs.forEach(function (ev) {
+        var p = pos(ev), m = { x: (last.x + p.x) / 2, y: (last.y + p.y) / 2 };
+        ctx.beginPath(); ctx.moveTo(mid.x, mid.y); ctx.quadraticCurveTo(last.x, last.y, m.x, m.y); ctx.stroke();
+        last = p; mid = m;
+      });
+    });
+    function end() {
+      if (!drawing) return;
+      drawing = false;
+      ctx.beginPath(); ctx.moveTo(mid.x, mid.y); ctx.lineTo(last.x, last.y); ctx.stroke();
+      S.signature = cv.toDataURL('image/png'); S.sigW = cssW; S.sigH = cssH;
+      S.signedAt = new Date().toISOString();
+      clearErr('signature'); update();
+    }
+    cv.addEventListener('pointerup', end);
+    cv.addEventListener('pointercancel', end);
+    cv.addEventListener('lostpointercapture', end);
+    $('sigClear').addEventListener('click', clearSig);
+    sizeCanvas();
+    var rw = window.innerWidth;
+    window.addEventListener('resize', function () {
+      if (window.innerWidth === rw) return; rw = window.innerWidth;
+      cssW = 0; sizeCanvas();
+    });
+  }
+  function clearSig() {
+    S.signature = null; S.signedAt = null; S.sigW = 0; S.sigH = 0;
+    if (ctx) ctx.clearRect(0, 0, cssW, cssH);
+    $('sigpad').classList.remove('signed');
+    update();
+  }
+
+  /* ---------- update ---------- */
+  function update() {
+    var t = computeTotals(S);
+    DENOMS.forEach(function (d, i) {
+      var l = t.cashLines[i];
+      cashTots[d.cents].textContent = fmtEUR(l.total);
+      cashRows[d.cents].classList.toggle('has', l.count > 0);
+    });
+    $('subBrief').textContent = $('tBrief').textContent = fmtEUR(t.briefjes);
+    $('subMunt').textContent = $('tMunt').textContent = fmtEUR(t.muntjes);
+    $('tCash').textContent = $('cashPill').textContent = $('zCash').textContent = fmtEUR(t.cashTotal);
+    $('tDig').textContent = $('digPill').textContent = $('zDig').textContent = fmtEUR(t.digitalTotal);
+    $('zKassa').textContent = $('barTotal').textContent = fmtEUR(t.kassaTotal);
+    $('sTekN').textContent = t.tekortCount; $('sTekT').textContent = fmtEUR(t.tekortCents);
+    $('sMisN').textContent = t.mistCount; $('sMisT').textContent = fmtEUR(t.mistTotal);
+    $('sAfwT').textContent = $('afwPill').textContent = $('zAfw').textContent = fmtEUR(t.afwijkingTotal);
+    $('afwSum').hidden = !S.afw.length;
+    $('sigStamp').innerHTML = S.signedAt
+      ? 'Ondertekend op <b>' + fmtDateTime(S.signedAt) + '</b>'
+      : 'Datum en tijd worden automatisch toegevoegd';
+    $('sigpad').classList.toggle('signed', !!S.signature);
+    saveDraft();
+  }
+
+  /* ---------- validatie ---------- */
+  function setErr(f, on) { var el = document.querySelector('.field[data-f="' + f + '"]'); if (el) el.classList.toggle('invalid', on); return el; }
+  function clearErr(f) { setErr(f, false); }
+  function validate() {
+    var checks = [
+      ['datum', !!S.datum], ['naam', !!S.naam.trim()], ['locatie', !!S.locatie],
+      ['signNaam', !!S.signNaam.trim()], ['signature', !!S.signature]
+    ];
+    var first = null;
+    checks.forEach(function (c) { var el = setErr(c[0], !c[1]); if (!c[1] && !first) first = el; });
+    if (first) { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+    return true;
+  }
+
+  /* ---------- export ---------- */
+  var dlPromise = null;
+  function getDownloads() {
+    if (!dlPromise) {
+      try {
+        dlPromise = (window.claude && typeof window.claude.use === 'function')
+          ? Promise.resolve(window.claude.use('downloads')).catch(function () { return null; })
+          : Promise.resolve(null);
+      } catch (e) { dlPromise = Promise.resolve(null); }
+    }
+    return dlPromise;
+  }
+  function fallbackSave(blob, filename) {
+    var url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+  }
+  function fileSafe(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w-]+/g, '_').replace(/^_+|_+$/g, ''); }
+
+  var lastPdf = null;
+  function doExport() {
+    if (!validate()) { toast('Vul de verplichte velden in.', true); return; }
+    if (!window.jspdf || !window.jspdf.jsPDF || !window.jspdf.jsPDF.API.autoTable) {
+      toast('PDF-module niet geladen. Controleer je internetverbinding en probeer opnieuw.', true); return;
+    }
+    var now = new Date(), ref = makeRef(now);
+    var filename = 'Kassa_opmaak_' + fileSafe(S.locatie) + '_' + S.datum + '_' + ref.slice(-6) + '.pdf';
+    var blob;
+    try {
+      blob = buildKassaPdf(window.jspdf.jsPDF, S, { ref: ref, createdAt: now }).output('blob');
+    } catch (e) {
+      console.error(e); toast('Er ging iets mis bij het maken van de PDF.', true); return;
+    }
+    var file = null;
+    try { file = new File([blob], filename, { type: 'application/pdf' }); } catch (e) {}
+    lastPdf = { blob: blob, file: file, filename: filename };
+    var canShare = false;
+    try { canShare = !!(file && navigator.canShare && navigator.canShare({ files: [file] })); } catch (e) {}
+    $('dShare').hidden = !canShare;
+    $('dDownload').className = canShare ? '' : 'btn-dark';
+    $('doneName').textContent = filename;
+    $('doneModal').classList.add('show');
+  }
+  function sharePdf() {
+    if (!lastPdf) return;
+    navigator.share({ files: [lastPdf.file], title: lastPdf.filename }).then(function () {
+      $('doneModal').classList.remove('show'); toast('PDF bewaard of gedeeld.');
+    }, function (err) {
+      if (err && err.name === 'AbortError') return;
+      downloadPdf();
+    });
+  }
+  function downloadPdf() {
+    if (!lastPdf) return;
+    var blob = lastPdf.blob, filename = lastPdf.filename;
+    getDownloads().then(function (dl) {
+      if (!dl) { fallbackSave(blob, filename); $('doneModal').classList.remove('show'); toast('PDF gedownload.'); return; }
+      return dl.save({ filename: filename, data: blob }).then(function () {
+        $('doneModal').classList.remove('show'); toast('PDF opgeslagen.');
+      }, function (err) {
+        var c = err && err.code;
+        if (c === 'declined') toast('Download geannuleerd.');
+        else if (c === 'rate_limited') toast('Even geduld en probeer opnieuw.', true);
+        else { fallbackSave(blob, filename); $('doneModal').classList.remove('show'); toast('PDF gedownload.'); }
+      });
+    });
+  }
+
+  /* ---------- reset ---------- */
+  function openModal() { $('modal').classList.add('show'); }
+  function closeModal() { $('modal').classList.remove('show'); }
+  function resetForm() {
+    S = emptyState();
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    fillStatic(); renderAfw(); clearSig();
+    document.querySelectorAll('.field.invalid').forEach(function (f) { f.classList.remove('invalid'); });
+    update(); closeModal(); window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast('Nieuw formulier gestart.');
+  }
+
+  /* ---------- start ---------- */
+  var restored = loadDraft();
+  $('logo').innerHTML = logoSVG();
+  initAlgemeen(); initCash(); fillStatic(); renderAfw();
+  initSig(); update();
+  if (restored) $('draftNote').textContent = 'Concept hersteld — je kunt verder invullen waar je gebleven was.';
+  $('addTekort').addEventListener('click', function () { addAfw('tekort'); });
+  $('addMist').addEventListener('click', function () { addAfw('mistikking'); });
+  $('exportBtn').addEventListener('click', doExport);
+  $('dShare').addEventListener('click', sharePdf);
+  $('dDownload').addEventListener('click', downloadPdf);
+  $('dClose').addEventListener('click', function () { $('doneModal').classList.remove('show'); });
+  $('resetBtn').addEventListener('click', openModal);
+  $('mCancel').addEventListener('click', closeModal);
+  $('mOk').addEventListener('click', resetForm);
+  $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closeModal(); });
+  getDownloads();
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+</body>
+</html>
