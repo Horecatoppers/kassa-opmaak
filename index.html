@@ -84,6 +84,32 @@
   .sub h3 .tag{font-size:12px;font-weight:500;color:var(--muted)}
   .mitem{border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--beige)}
   .mitem .mg2{display:grid;gap:8px}
+  select.sel{width:100%;font:inherit;font-size:16px;color:var(--ink);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a726b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center/16px;border:1.5px solid var(--line);border-radius:10px;padding:11px 38px 11px 12px;outline:none;text-align:left;text-align-last:left;-webkit-appearance:none;appearance:none;min-height:46px}
+  select.sel:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(209,124,78,.18)}
+  select.sel.empty{color:var(--muted)}
+  .mitem.invalid select.sel{border-color:var(--red)}
+  .mitem .ierr{display:none;color:var(--red);font-size:12px}
+  .mitem.invalid .ierr{display:block}
+  .thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .thumb{position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--beige)}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .thumb .nr{position:absolute;left:6px;bottom:6px;background:rgba(42,42,42,.8);color:#fff;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px}
+  .thumb .rm{position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(42,42,42,.8);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
+  .thumb .rm svg{width:14px;height:14px}
+  .addthumb{aspect-ratio:3/4;border:1.5px dashed #dfb79f;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--acc-d);font-weight:600;font-size:13px;text-align:center;cursor:pointer;padding:6px;background:#fff}
+  .addthumb svg,.photobtn svg{width:24px;height:24px}
+  .filein{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .field.invalid .thumbs .addthumb{border-color:var(--red);color:var(--red)}
+  .photobtn{display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px dashed #dfb79f;border-radius:10px;padding:10px;color:var(--acc-d);font-weight:600;font-size:14px;cursor:pointer;background:#fff}
+  .photobtn svg{width:18px;height:18px}
+  .bonfoto{display:flex;align-items:center;gap:10px}
+  .bonfoto img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+  .bonfoto span{flex:1;font-size:13px;color:var(--muted)}
+  .bonrow{border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:10px;padding:10px;margin-bottom:10px;background:var(--beige);display:grid;gap:8px}
+  .bonrow .bh{display:grid;grid-template-columns:1fr 140px;align-items:center;gap:8px}
+  .bonrow .nm{font-weight:600;font-size:14.5px;line-height:1.25}
+  .bonrow .nm small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+  .hint2{font-size:12.5px;color:var(--muted);margin:0 0 10px}
   .mitem textarea{min-height:56px}
   .addrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .addrow .addbtn{padding:12px 8px}
@@ -94,7 +120,7 @@
   table.sum{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
   table.sum th{font-size:11.5px;font-weight:600;color:var(--muted);text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
   table.sum td{padding:7px 4px;border-bottom:1px solid var(--line)}
-  table.sum .r{text-align:right}
+  table.sum .r{text-align:right;white-space:nowrap}
   table.sum .c{text-align:center}
   table.sum tfoot td{font-weight:700;border-bottom:0}
 
@@ -208,9 +234,27 @@
     <div class="totals"><div class="big" style="border:0;margin:0;padding:0"><span>Totaal digitaal</span><span id="tDig">€ 0,00</span></div></div>
   </section>
 
-  <!-- 4. Kassa afwijkingen -->
+  <!-- 4. Kassaticket -->
   <section class="card">
-    <h2><span class="ttl"><span class="num">4</span>Kassa afwijkingen</span><span class="pill" id="afwPill">€ 0,00</span></h2>
+    <h2><span class="ttl"><span class="num">4</span>Kassaticket</span><span class="pill" id="ticketPill">0 foto's</span></h2>
+    <div class="field" data-f="ticket">
+      <p class="hint2">Neem een foto van het kassaticket (bv. dagverslag). Minstens één foto is verplicht, meerdere mag.</p>
+      <div class="thumbs" id="ticketThumbs"></div>
+      <div class="err">Voeg minstens één foto van het kassaticket toe.</div>
+    </div>
+  </section>
+
+  <!-- 5. Cadeaubonnen -->
+  <section class="card">
+    <h2><span class="ttl"><span class="num">5</span>Cadeaubonnen</span><span class="pill" id="bonPill">€ 0,00</span></h2>
+    <p class="hint2">Vul per soort het totaalbedrag in dat op het kassaticket staat.</p>
+    <div id="bonRows"></div>
+    <div class="totals"><div class="big" style="border:0;margin:0;padding:0"><span>Totaal cadeaubonnen</span><span id="bonTot">€ 0,00</span></div></div>
+  </section>
+
+  <!-- 5. Kassa afwijkingen -->
+  <section class="card">
+    <h2><span class="ttl"><span class="num">6</span>Kassa afwijkingen</span><span class="pill" id="afwPill">€ 0,00</span></h2>
 
     <div id="afwList"></div>
     <div class="addrow">
@@ -230,11 +274,7 @@
 
   <!-- 5. Controle -->
   <section class="card">
-    <h2><span class="ttl"><span class="num">5</span>Controle</span></h2>
-    <div class="field">
-      <label class="lbl" for="gecontroleerd">Kassa opmaak gecontroleerd door</label>
-      <input type="text" id="gecontroleerd" placeholder="Naam">
-    </div>
+    <h2><span class="ttl"><span class="num">7</span>Extra info</span></h2>
     <div class="field">
       <label class="lbl" for="geldLocatie">Locatie waar het geld ligt</label>
       <input type="text" id="geldLocatie" placeholder="Bv. brievenbus, kluis">
@@ -247,7 +287,7 @@
 
   <!-- 6. Handtekening -->
   <section class="card">
-    <h2><span class="ttl"><span class="num">6</span>Naam + handtekening</span></h2>
+    <h2><span class="ttl"><span class="num">8</span>Naam + handtekening</span></h2>
     <div class="field" data-f="signNaam">
       <label class="lbl" for="signNaam">Naam <span class="req">*</span></label>
       <input type="text" id="signNaam" autocomplete="name" placeholder="Naam van de medewerker">
@@ -276,6 +316,7 @@
         <tr><td>Totaal contant geld</td><td class="r" id="zCash">€ 0,00</td></tr>
         <tr><td>Totaal digitale betalingen</td><td class="r" id="zDig">€ 0,00</td></tr>
         <tr><td><b>Totaal kassa</b></td><td class="r"><b id="zKassa">€ 0,00</b></td></tr>
+        <tr><td>Totaal cadeaubonnen</td><td class="r" id="zBon">€ 0,00</td></tr>
         <tr><td>Totaal kassa afwijkingen</td><td class="r" id="zAfw">€ 0,00</td></tr>
       </tbody>
     </table>
@@ -363,6 +404,13 @@ function drawLogoPdf(doc, x, y, w) {
   return w * LOGO_H / LOGO_W;
 }
 
+var BON_TYPES = [
+  { key: 'cadeaubon', label: 'Cadeaubon', sub: 'plastic kaartje, ZenChef' },
+  { key: 'leat', label: 'Leat', sub: '' },
+  { key: 'gemeente', label: 'Gemeentebon', sub: 'Bornem bon / P-bon' }
+];
+function bonLabel(b) { return b.label + (b.sub ? ' (' + b.sub + ')' : ''); }
+
 var DENOMS = [
   { cents: 50000, type: 'Briefjes' }, { cents: 20000, type: 'Briefjes' },
   { cents: 10000, type: 'Briefjes' }, { cents: 5000, type: 'Briefjes' },
@@ -381,8 +429,10 @@ function emptyState() {
     datum: todayISO(), naam: '', locatie: '',
     cash: cash,
     ayden: '', bcc: '',
+    ticketFotos: [],
+    bon: { cadeaubon: { bedrag: '', foto: null }, leat: { bedrag: '', foto: null }, gemeente: { bedrag: '', foto: null } },
     afw: [],
-    gecontroleerd: '', geldLocatie: '', opmerkingen: '',
+    geldLocatie: '', opmerkingen: '',
     signNaam: '', signature: null, sigW: 0, sigH: 0, signedAt: null
   };
 }
@@ -442,6 +492,12 @@ function computeTotals(s) {
   var digital = [{ naam: 'Ayden', cents: parseCents(s.ayden) }, { naam: 'BCC', cents: parseCents(s.bcc) }];
   var digitalTotal = digital.reduce(function (a, d) { return a + d.cents; }, 0);
 
+  var bonLines = BON_TYPES.map(function (b) {
+    var v = (s.bon && s.bon[b.key]) || {};
+    return { key: b.key, label: bonLabel(b), cents: parseCents(v.bedrag), foto: v.foto || null };
+  });
+  var bonTotal = bonLines.reduce(function (a, b) { return a + b.cents; }, 0);
+
   var afwItems = (s.afw || [])
     .map(function (it) { return { type: it.type, opm: (it.opm || '').trim(), cents: parseCents(it.bedrag) }; })
     .filter(function (it) { return it.cents > 0 || it.opm; });
@@ -454,6 +510,7 @@ function computeTotals(s) {
     cashLines: cashLines, briefjes: briefjes, muntjes: muntjes, cashTotal: cashTotal,
     digital: digital, digitalTotal: digitalTotal,
     kassaTotal: cashTotal + digitalTotal,
+    bonLines: bonLines, bonTotal: bonTotal,
     afwItems: afwItems, tekortItems: tekortItems,
     tekortCents: tekortCents, tekortCount: tekortItems.length,
     mistItems: mistItems, mistTotal: mistTotal, mistCount: mistItems.length,
@@ -473,6 +530,14 @@ function pdfSafe(t) { return String(t == null ? '' : t).replace(/[  ]/g, ' ')
 function buildKassaPdf(jsPDF, s, meta) {
   var t = computeTotals(s);
   var doc = new jsPDF({ unit: 'mm', format: 'a4' });
+
+  // Foto's: eerst de kassatickets, dan de cadeaubonnen; elk krijgt een nummer voor de bijlagen.
+  var photos = [];
+  (s.ticketFotos || []).forEach(function (f, i) { photos.push({ f: f, cap: 'Kassaticket ' + (i + 1) }); });
+  t.bonLines.forEach(function (b) {
+    if (b.foto) { b.fotoNr = photos.length + 1; photos.push({ f: b.foto, cap: b.label + (b.cents ? ' · ' + fmtEUR(b.cents) : '') }); }
+  });
+  var nTicket = (s.ticketFotos || []).length;
   var W = 210, H = 297, M = 16;
   var DARK = [42, 42, 42], ACC = [209, 124, 78], ACC_D = [168, 92, 50], BEIGE = [246, 236, 227], BEIGE_XL = [251, 247, 243], INK = [42, 42, 42], MUTED = [118, 112, 106], LINE = [226, 216, 207];
   var created = meta.createdAt || new Date();
@@ -564,6 +629,28 @@ function buildKassaPdf(jsPDF, s, meta) {
     }
   });
 
+  // Kassaticket
+  y = heading('Kassaticket', y + 9, 24);
+  y = table({
+    startY: y,
+    body: [["Foto's kassaticket", nTicket ? (nTicket + (nTicket === 1 ? ' foto' : " foto's") + ' (zie bijlagen: foto 1' + (nTicket > 1 ? ' t/m ' + nTicket : '') + ')') : 'Geen']],
+    columnStyles: { 0: { cellWidth: 62, textColor: ACC_D, fontStyle: 'bold', fillColor: BEIGE_XL } }
+  });
+
+  // Cadeaubonnen
+  y = heading('Cadeaubonnen', y + 9, 40);
+  y = table({
+    startY: y,
+    head: [['N°', 'Type cadeaubon', 'Totaalbedrag', 'Foto']],
+    body: t.bonLines.map(function (b, i) { return [i + 1, b.label, b.cents ? pdfSafe(fmtEUR(b.cents)) : '', b.fotoNr ? 'Foto ' + b.fotoNr : '–']; }),
+    foot: [[{ content: 'Totaal cadeaubonnen', colSpan: 2, styles: { halign: 'right' } }, pdfSafe(fmtEUR(t.bonTotal)), '']],
+    columnStyles: { 0: { halign: 'center', cellWidth: 12 }, 2: { halign: 'right', cellWidth: 36 }, 3: { halign: 'center', cellWidth: 24 } },
+    didParseCell: function (d) {
+      if (d.section === 'head' && (d.column.index === 0 || d.column.index === 3)) d.cell.styles.halign = 'center';
+      if (d.section !== 'body' && d.column.index === 2) d.cell.styles.halign = 'right';
+    }
+  });
+
   // Kassa afwijkingen
   y = heading('Kassa afwijkingen', y + 9, 40);
   y = table({
@@ -608,17 +695,17 @@ function buildKassaPdf(jsPDF, s, meta) {
       ['Totaal contant geld', pdfSafe(fmtEUR(t.cashTotal))],
       ['Totaal digitale betalingen', pdfSafe(fmtEUR(t.digitalTotal))],
       [{ content: 'Totaal kassa', styles: { fontStyle: 'bold' } }, { content: pdfSafe(fmtEUR(t.kassaTotal)), styles: { fontStyle: 'bold' } }],
+      ['Totaal cadeaubonnen', pdfSafe(fmtEUR(t.bonTotal))],
       ['Totaal kassa afwijkingen', pdfSafe(fmtEUR(t.afwijkingTotal))]
     ],
     columnStyles: { 0: { fillColor: BEIGE_XL }, 1: { halign: 'right', cellWidth: 46 } }
   });
 
   // Controle & opmerkingen
-  y = heading('Controle', y + 9, 36);
+  y = heading('Extra info', y + 9, 30);
   y = table({
     startY: y,
     body: [
-      ['Kassa opmaak gecontroleerd door', pdfSafe(s.gecontroleerd)],
       ['Locatie waar het geld ligt', pdfSafe(s.geldLocatie)],
       ['Opmerkingen over de kassa', pdfSafe(s.opmerkingen)]
     ],
@@ -636,10 +723,37 @@ function buildKassaPdf(jsPDF, s, meta) {
   doc.roundedRect(M, sy, sigBoxW + 6, sigImgH + 6, 1.5, 1.5, 'S');
   if (s.signature && sigImgH) {
     var w = sigImgH * s.sigW / s.sigH;
-    doc.addImage(s.signature, 'PNG', M + 3, sy + 3, Math.min(w, sigBoxW), sigImgH);
+    doc.addImage(s.signature, 'PNG', M + 3, sy + 3, Math.min(w, sigBoxW), sigImgH, 'handtekening', 'FAST');
   }
   doc.setFontSize(8.5); doc.setTextColor.apply(doc, MUTED);
   doc.text(pdfSafe('Ondertekend door ' + (s.signNaam || '–') + ' op ' + (s.signedAt ? fmtDateTime(s.signedAt) : '–')), M, sy + sigImgH + 12);
+
+  // Bijlagen: foto's, twee per rij
+  if (photos.length) {
+    doc.addPage();
+    var py = heading("Bijlagen: foto's", 18, 10) + 4;
+    var colW = (W - 2 * M - 8) / 2, maxH = 112;
+    for (var pi = 0; pi < photos.length; pi += 2) {
+      var row = photos.slice(pi, pi + 2).map(function (ph) {
+        var fw = ph.f.w || 3, fh = ph.f.h || 4, w = colW, h = w * fh / fw;
+        if (h > maxH) { h = maxH; w = h * fw / fh; }
+        return { ph: ph, w: w, h: h };
+      });
+      var rowH = Math.max.apply(null, row.map(function (r) { return r.h; })) + 11;
+      if (py + rowH > H - 16) { doc.addPage(); py = 18; }
+      row.forEach(function (r, ci) {
+        var cx = M + ci * (colW + 8);
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor.apply(doc, INK);
+        doc.text(pdfSafe('Foto ' + (pi + ci + 1)), cx, py + 3);
+        doc.setFont('helvetica', 'normal'); doc.setTextColor.apply(doc, MUTED);
+        doc.text(pdfSafe(doc.splitTextToSize(r.ph.cap, colW - 16)[0]), cx + 14, py + 3);
+        try { doc.addImage(r.ph.f.src, 'JPEG', cx + (colW - r.w) / 2, py + 6, r.w, r.h); } catch (e) {}
+        doc.setDrawColor.apply(doc, LINE); doc.setLineWidth(0.2);
+        doc.rect(cx + (colW - r.w) / 2, py + 6, r.w, r.h, 'S');
+      });
+      py += rowH + 4;
+    }
+  }
 
   // Footer
   var n = doc.getNumberOfPages();
@@ -653,24 +767,33 @@ function buildKassaPdf(jsPDF, s, meta) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { logoSVG: logoSVG, DENOMS: DENOMS, LOCATIES: LOCATIES, emptyState: emptyState, parseCents: parseCents, fmtEUR: fmtEUR, computeTotals: computeTotals, buildKassaPdf: buildKassaPdf, makeRef: makeRef };
+  module.exports = { BON_TYPES: BON_TYPES, bonLabel: bonLabel, logoSVG: logoSVG, DENOMS: DENOMS, LOCATIES: LOCATIES, emptyState: emptyState, parseCents: parseCents, fmtEUR: fmtEUR, computeTotals: computeTotals, buildKassaPdf: buildKassaPdf, makeRef: makeRef };
 }
 
 </script>
 <script>
 (function () {
   'use strict';
-  var KEY = 'kassa-opmaak-concept-v2';
+  var KEY = 'kassa-opmaak-concept-v3';
   var S = emptyState();
   var $ = function (id) { return document.getElementById(id); };
   var TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>';
 
   /* ---------- opslag (concept op dit toestel) ---------- */
-  var saveTimer = null;
+  var saveTimer = null, photoWarned = false;
   function saveDraft() {
     clearTimeout(saveTimer);
     saveTimer = setTimeout(function () {
-      try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+      try { localStorage.setItem(KEY, JSON.stringify(S)); }
+      catch (e) {
+        // Te groot voor de opslag van de browser: bewaar het concept zonder foto's.
+        try {
+          var lite = JSON.parse(JSON.stringify(S));
+          lite.ticketFotos = []; (lite.bons || []).forEach(function (b) { b.foto = null; });
+          localStorage.setItem(KEY, JSON.stringify(lite));
+          if (!photoWarned) { photoWarned = true; toast("Let op: foto's worden niet in het concept bewaard. Maak de PDF voor je de app sluit.", true); }
+        } catch (e2) {}
+      }
     }, 300);
   }
   function loadDraft() {
@@ -714,14 +837,14 @@ if (typeof module !== 'undefined') {
       return '<input type="radio" name="loc" id="loc' + i + '" value="' + esc(l) + '"><label for="loc' + i + '">' + esc(l) + '</label>';
     }).join('');
     box.addEventListener('change', function (e) { S.locatie = e.target.value; clearErr('locatie'); update(); });
-    ['datum', 'naam', 'gecontroleerd', 'geldLocatie', 'opmerkingen', 'signNaam'].forEach(function (id) {
+    ['datum', 'naam', 'geldLocatie', 'opmerkingen', 'signNaam'].forEach(function (id) {
       $(id).addEventListener('input', function () { S[id] = $(id).value; clearErr(id); update(); });
     });
     bindMoney($('ayden'), function () { return S.ayden; }, function (v) { S.ayden = v; });
     bindMoney($('bcc'), function () { return S.bcc; }, function (v) { S.bcc = v; });
   }
   function fillStatic() {
-    ['datum', 'naam', 'gecontroleerd', 'geldLocatie', 'opmerkingen', 'signNaam'].forEach(function (id) { $(id).value = S[id] || ''; });
+    ['datum', 'naam', 'geldLocatie', 'opmerkingen', 'signNaam'].forEach(function (id) { $(id).value = S[id] || ''; });
     $('ayden').value = S.ayden || '';
     $('bcc').value = S.bcc || '';
     Array.prototype.forEach.call(document.querySelectorAll('#locaties input'), function (r) { r.checked = r.value === S.locatie; });
@@ -757,7 +880,93 @@ if (typeof module !== 'undefined') {
     });
   }
 
-  /* ---------- 4. kassa afwijkingen ---------- */
+  /* ---------- foto's ---------- */
+  var CAMERA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+  var XICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  var MAX_SIDE = 1600, QUALITY = 0.78;
+
+  // Verkleint een foto tot max. 1600 px (leesbaar ticket, ~150-350 KB) en geeft { src, w, h } terug.
+  function compressPhoto(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var k = Math.min(1, MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+        var w = Math.max(1, Math.round(img.naturalWidth * k)), h = Math.max(1, Math.round(img.naturalHeight * k));
+        var c = document.createElement('canvas'); c.width = w; c.height = h;
+        var cx = c.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, w, h); cx.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        resolve({ src: c.toDataURL('image/jpeg', QUALITY), w: w, h: h });
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('Foto kon niet gelezen worden')); };
+      img.src = url;
+    });
+  }
+  function pickPhotos(multiple, onPhotos) {
+    var inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'image/*'; inp.multiple = !!multiple; inp.className = 'filein';
+    document.body.appendChild(inp);
+    inp.addEventListener('cancel', function () { inp.remove(); });
+    inp.addEventListener('change', function () {
+      var files = Array.prototype.slice.call(inp.files || []); inp.remove();
+      if (!files.length) return;
+      toast(files.length > 1 ? "Foto's verwerken…" : 'Foto verwerken…');
+      Promise.all(files.map(function (f) { return compressPhoto(f).catch(function () { return null; }); })).then(function (list) {
+        list = list.filter(Boolean);
+        if (!list.length) { toast('Deze foto kon niet gelezen worden.', true); return; }
+        onPhotos(list);
+        toast(list.length > 1 ? list.length + " foto's toegevoegd." : 'Foto toegevoegd.');
+      });
+    });
+    inp.click();
+  }
+
+  function renderTicket() {
+    var box = $('ticketThumbs'); box.innerHTML = '';
+    S.ticketFotos.forEach(function (f, i) {
+      var el = document.createElement('div'); el.className = 'thumb';
+      el.innerHTML = '<img alt="Kassaticket foto ' + (i + 1) + '"><span class="nr">' + (i + 1) + '</span><button type="button" class="rm" aria-label="Verwijder foto ' + (i + 1) + '">' + XICON + '</button>';
+      el.querySelector('img').src = f.src;
+      el.querySelector('.rm').addEventListener('click', function () { S.ticketFotos.splice(i, 1); renderTicket(); update(); });
+      box.appendChild(el);
+    });
+    var add = document.createElement('button'); add.type = 'button'; add.className = 'addthumb';
+    add.innerHTML = CAMERA + '<span>' + (S.ticketFotos.length ? 'Nog een foto' : 'Foto toevoegen') + '</span>';
+    add.addEventListener('click', function () {
+      pickPhotos(true, function (list) { S.ticketFotos = S.ticketFotos.concat(list); clearErr('ticket'); renderTicket(); update(); });
+    });
+    box.appendChild(add);
+  }
+
+  /* ---------- 5. cadeaubonnen: drie vaste soorten, elk één totaalbedrag + optionele foto ---------- */
+  function renderBons() {
+    var box = $('bonRows'); box.innerHTML = '';
+    BON_TYPES.forEach(function (bt) {
+      var bon = S.bon[bt.key] || (S.bon[bt.key] = { bedrag: '', foto: null });
+      var el = document.createElement('div');
+      el.className = 'bonrow';
+      el.innerHTML = '<div class="bh"><div class="nm">' + esc(bt.label) + (bt.sub ? '<small>' + esc(bt.sub) + '</small>' : '') + '</div>' +
+        '<div class="money"><input type="text" inputmode="decimal" placeholder="0,00" aria-label="Totaal ' + esc(bonLabel(bt)) + '"></div></div>' +
+        '<div class="bonph"></div>';
+      bindMoney(el.querySelector('input'), function () { return bon.bedrag; }, function (v) { bon.bedrag = v; });
+      var ph = el.querySelector('.bonph');
+      function drawPh() {
+        if (bon.foto) {
+          ph.innerHTML = '<div class="bonfoto"><img alt="Foto ' + esc(bt.label) + '"><span>Foto toegevoegd</span><button type="button" class="linkbtn">Verwijderen</button></div>';
+          ph.querySelector('img').src = bon.foto.src;
+          ph.querySelector('button').addEventListener('click', function () { bon.foto = null; drawPh(); update(); });
+        } else {
+          ph.innerHTML = '<button type="button" class="photobtn" style="width:100%">' + CAMERA + '<span>Foto (optioneel)</span></button>';
+          ph.querySelector('button').addEventListener('click', function () {
+            pickPhotos(false, function (list) { bon.foto = list[0]; drawPh(); update(); });
+          });
+        }
+      }
+      drawPh();
+      box.appendChild(el);
+    });
+  }
+
+  /* ---------- 5. kassa afwijkingen ---------- */
   var AFW = { tekort: { one: 'Tekort', many: 'Tekorten' }, mistikking: { one: 'Mistikking', many: 'Mistikkingen' } };
   function renderAfw(focusItem) {
     var box = $('afwList'); box.innerHTML = '';
@@ -880,6 +1089,8 @@ if (typeof module !== 'undefined') {
     $('sMisN').textContent = t.mistCount; $('sMisT').textContent = fmtEUR(t.mistTotal);
     $('sAfwT').textContent = $('afwPill').textContent = $('zAfw').textContent = fmtEUR(t.afwijkingTotal);
     $('afwSum').hidden = !S.afw.length;
+    $('ticketPill').textContent = S.ticketFotos.length + (S.ticketFotos.length === 1 ? ' foto' : " foto's");
+    $('bonPill').textContent = $('bonTot').textContent = $('zBon').textContent = fmtEUR(t.bonTotal);
     $('sigStamp').innerHTML = S.signedAt
       ? 'Ondertekend op <b>' + fmtDateTime(S.signedAt) + '</b>'
       : 'Datum en tijd worden automatisch toegevoegd';
@@ -893,6 +1104,7 @@ if (typeof module !== 'undefined') {
   function validate() {
     var checks = [
       ['datum', !!S.datum], ['naam', !!S.naam.trim()], ['locatie', !!S.locatie],
+      ['ticket', S.ticketFotos.length > 0],
       ['signNaam', !!S.signNaam.trim()], ['signature', !!S.signature]
     ];
     var first = null;
@@ -975,7 +1187,7 @@ if (typeof module !== 'undefined') {
   function resetForm() {
     S = emptyState();
     try { localStorage.removeItem(KEY); } catch (e) {}
-    fillStatic(); renderAfw(); clearSig();
+    fillStatic(); renderTicket(); renderBons(); renderAfw(); clearSig();
     document.querySelectorAll('.field.invalid').forEach(function (f) { f.classList.remove('invalid'); });
     update(); closeModal(); window.scrollTo({ top: 0, behavior: 'smooth' });
     toast('Nieuw formulier gestart.');
@@ -984,7 +1196,7 @@ if (typeof module !== 'undefined') {
   /* ---------- start ---------- */
   var restored = loadDraft();
   $('logo').innerHTML = logoSVG();
-  initAlgemeen(); initCash(); fillStatic(); renderAfw();
+  initAlgemeen(); initCash(); fillStatic(); renderTicket(); renderBons(); renderAfw();
   initSig(); update();
   if (restored) $('draftNote').textContent = 'Concept hersteld — je kunt verder invullen waar je gebleven was.';
   $('addTekort').addEventListener('click', function () { addAfw('tekort'); });
